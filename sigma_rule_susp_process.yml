@@ -1,0 +1,28 @@
+title: Suspicious Process Creation - Script Interpreter Launching Untrusted Child
+id: 8f4e3b2a-1c6d-4e8a-9f2b-7d5e1a3c8b4f
+status: experimental
+description: Detects wscript.exe, cscript.exe, or powershell.exe launching a process from a user download folder
+author: Chase Harvey
+date: 2026-05-15
+tags:
+  - attack.execution
+  - attack.t1059.005
+  - attack.t1204.002
+logsource:
+  category: process_creation
+  product: windows
+  service: security   # or sysmon event 1
+detection:
+  selection_parent:
+    Image|endswith:
+      - '\wscript.exe'
+      - '\cscript.exe'
+      - '\powershell.exe'
+  selection_child:
+    Image|contains:
+      - '\Downloads\'
+      - '\Temp\'
+  condition: selection_parent and selection_child
+falsepositives:
+  - Legitimate admin scripts manually run from downloads (rare)
+level: medium
